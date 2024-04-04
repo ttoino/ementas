@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+    mongo:
+        image: mongo:7
+        command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+        expose:
+            - "27017:27017"
+        healthcheck:
+            test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017'}]}) }" | mongosh --port 27017 --quiet
+            interval: 5s
+            timeout: 30s
+            start_period: 0s
+            start_interval: 1s
+            retries: 30
+        environment:
+            # MONGO_INITDB_ROOT_USERNAME: username
+            # MONGO_INITDB_ROOT_PASSWORD: password
+            MONGO_INITDB_DATABASE: ementas
+        volumes:
+            - ./data:/data/db
+
+    prod:
+        build:
+            context: .
+            target: prod
+        ports:
+            - "3000:3000"
+        depends_on:
+            - mongo
+        env_file: .env
+
+    dev:
+        image: node:current-alpine
+        working_dir: /app
+        volumes:
+            - .:/app
+        ports:
+            - "5173:5173"
+        command: npm run dev -- --host
+        depends_on:
+            - mongo
+
+    test:
+        image: node:current-alpine
+        working_dir: /app
+        volumes:
+            - .:/app
+        command: npm run test

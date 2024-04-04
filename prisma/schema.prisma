@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+enum Language {
+    pt
+    en
+}
+
+model Restaurant {
+    id    String     @id @default(auto()) @map("_id") @db.ObjectId
+    name  String     @unique
+    lang  Language
+    meals Meal[]
+    files MenuFile[]
+}
+
+model MenuFile {
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+    start   DateTime @db.Date
+    end     DateTime @db.Date
+    content String
+
+    restaurantId String?     @db.ObjectId
+    Restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+    @@unique([start, end, restaurantId])
+}
+
+model Meal {
+    id   String   @id @default(auto()) @map("_id") @db.ObjectId
+    date DateTime @db.Date
+
+    items Items
+
+    restaurantId String     @db.ObjectId
+    restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+    @@unique([date, restaurantId])
+    @@index([date])
+    @@index([restaurantId])
+}
+
+type Items {
+    soup       String?
+    meat       String?
+    fish       String?
+    diet       String?
+    vegetarian String?
+    salad      String?
+    other      String?
+}
