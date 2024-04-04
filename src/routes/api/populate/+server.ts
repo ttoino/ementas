@@ -7,7 +7,9 @@ import { error, json } from "@sveltejs/kit";
 export const POST: RequestHandler = async ({ getClientAddress }) => {
     const clientAddress = getClientAddress();
 
-    if (clientAddress !== "::1") throw error(403);
+    console.log(`Client address: ${clientAddress}`);
+
+    if (!["::1", "127.0.0.1"].includes(clientAddress)) throw error(403);
 
     const meals = await scrape();
 
