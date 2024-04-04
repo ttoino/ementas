@@ -1,0 +1,1 @@
+0 9 * * * curl -X POST http://localhost:3000/api/populate >/dev/null 2>&1

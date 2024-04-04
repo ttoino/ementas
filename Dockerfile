@@ -24,6 +24,10 @@ FROM node:current-alpine AS prod
 
 WORKDIR /app
 
+RUN apk add --no-cache curl
+
+COPY crontab.txt /etc/crontabs/root
+
 COPY package.json package-lock.json ./
 COPY prisma prisma
 
@@ -32,4 +36,4 @@ RUN npm run prisma:gen
 
 COPY --from=build /app/build .
 
-ENTRYPOINT [ "node", "." ]
+ENTRYPOINT [ "/bin/sh", "-c", "crond && node ." ]
