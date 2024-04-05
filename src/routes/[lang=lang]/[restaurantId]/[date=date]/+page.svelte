@@ -5,6 +5,8 @@
     import { swipe } from "svelte-gestures";
     import { goto } from "$app/navigation";
     import { fade } from "svelte/transition";
+    import type { RestaurantLanguage } from "$lib/restaurant.js";
+    import { typedEntries } from "$lib/util.js";
 
     export let data;
 
@@ -19,7 +21,28 @@
         diet: "text-secondary i-tabler-heart",
         vegetarian: "text-success i-tabler-leaf",
         salad: "text-accent i-tabler-salad",
-        other: "i-tabler-apple",
+        other: "i-tabler-tools-kitchen-2",
+    };
+
+    const typeNames: Record<RestaurantLanguage, Record<MealType, string>> = {
+        en: {
+            soup: "Soup",
+            meat: "Meat",
+            fish: "Fish",
+            diet: "Diet",
+            vegetarian: "Vegetarian",
+            salad: "Salad",
+            other: "Other",
+        },
+        pt: {
+            soup: "Sopa",
+            meat: "Carne",
+            fish: "Peixe",
+            diet: "Dieta",
+            vegetarian: "Vegetariano",
+            salad: "Salada",
+            other: "Outro",
+        },
     };
 
     let dates: [string, string][] = [];
@@ -49,7 +72,7 @@
     }
 
     const url = (date: string) =>
-        `/${data.lang}/${data.restaurant.id}/${date}/`;
+        `/${data.lang}/${data.restaurant?.id}/${date}/`;
 </script>
 
 <svelte:body
@@ -76,16 +99,18 @@
 <div class="grid">
     {#if meal && Object.values(meal.items).length > 0}
         <ul class="col-start-1 row-start-1 flex flex-col gap-4" transition:fade>
-            {#each [...Object.entries(meal.items)].filter(([_, dish]) => !!dish) as [type, dish] (type)}
+            {#each typedEntries(meal.items).filter(([_, dish]) => !!dish) as [type, dish] (type)}
                 <li
                     class="flex flex-row items-center gap-4"
                     transition:fade
                     animate:flip
                 >
                     <span
-                        class="select-none text-5xl {type in typeClasses
+                        class="tooltip tooltip-bottom select-none text-5xl {type in
+                        typeClasses
                             ? typeClasses[type]
-                            : typeClasses['other']}">{type}</span
+                            : typeClasses['other']}"
+                        data-tip={typeNames[lang][type]}>{type}</span
                     >
                     <div class="grid items-center">
                         {#key dish}
@@ -103,7 +128,7 @@
             class="col-start-1 row-start-1 m-8 flex flex-col items-center gap-4 text-center text-2xl"
             transition:fade
         >
-            <span class="i-tabler-mood-sad text-9xl"></span>
+            <span class="i-tabler-tools-kitchen-2-off text-9xl"></span>
             <span>
                 {lang === "en" ? "Menu not found" : "Ementa não encontrada"}
             </span>

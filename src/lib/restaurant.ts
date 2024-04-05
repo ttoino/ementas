@@ -1,4 +1,5 @@
 import type { Prisma, Language } from "@prisma/client";
+import type { Meal } from "./meal";
 
 export type RestaurantLanguage = Language;
 
@@ -10,7 +11,7 @@ export type Restaurant = Omit<
 >;
 
 export type RestaurantWithMeals = Restaurant & {
-    meals: Prisma.MealUncheckedCreateWithoutRestaurantInput[];
+    meals: Meal[];
 };
 
 export type RestaurantWithFiles = Restaurant & {

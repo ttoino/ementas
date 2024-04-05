@@ -1,10 +1,14 @@
 import type { RestaurantWithFiles } from "./restaurant";
 import type { Prisma } from "@prisma/client";
 
-export type MealType = keyof Prisma.ItemsCreateInput & string;
+export type MealItems = Prisma.ItemsCreateInput;
 
-export type Meal = Prisma.MealCreateWithoutRestaurantInput;
+export type MealType = keyof MealItems & string;
 
-export type MealWithRestaurant = Prisma.MealCreateWithoutRestaurantInput & {
+export type Meal = Omit<Prisma.MealCreateWithoutRestaurantInput, "items"> & {
+    items: MealItems;
+};
+
+export type MealWithRestaurant = Meal & {
     restaurant: RestaurantWithFiles;
 };
