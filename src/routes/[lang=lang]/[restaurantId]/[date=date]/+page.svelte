@@ -81,6 +81,11 @@
         if (direction === "left") goto(url(dates[8][0]));
         else if (direction === "right") goto(url(dates[6][0]));
     }}
+    on:keydown={({ key }) => {
+        console.log(key);
+        if (key === "ArrowLeft") goto(url(dates[6][0]));
+        else if (key === "ArrowRight") goto(url(dates[8][0]));
+    }}
 />
 
 <nav
@@ -106,12 +111,16 @@
                     animate:flip
                 >
                     <span
-                        class="tooltip tooltip-bottom select-none text-5xl {type in
-                        typeClasses
-                            ? typeClasses[type]
-                            : typeClasses['other']}"
-                        data-tip={typeNames[lang][type]}>{type}</span
+                        class="tooltip tooltip-bottom"
+                        data-tip={typeNames[lang][type]}
                     >
+                        <span
+                            class="select-none text-5xl {type in typeClasses
+                                ? typeClasses[type]
+                                : typeClasses['other']}"
+                            >{typeNames[lang][type]}</span
+                        >
+                    </span>
                     <div class="grid items-center">
                         {#key dish}
                             <span
