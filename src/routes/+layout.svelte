@@ -27,11 +27,10 @@
         </h1>
         {#if selectedRestaurant}
             <div class="dropdown dropdown-end">
-                <div tabindex="0" class="btn">
+                <button class="btn">
                     {selectedRestaurant?.name ?? "Select restaurant"}
-                </div>
+                </button>
                 <ul
-                    tabindex="0"
                     class="menu dropdown-content z-20 mt-2 max-h-52 w-64 flex-nowrap overflow-y-auto rounded-box bg-base-300 p-2 shadow"
                 >
                     {#each restaurants as restaurant, i (i)}
