@@ -1,6 +1,7 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import type { Restaurant } from "$lib/restaurant";
+    import { MetaTags } from "svelte-meta-tags";
     import "../app.pcss";
 
     export let data;
@@ -17,6 +18,8 @@
             ? ($page.data.restaurant as Restaurant)
             : undefined;
 </script>
+
+<MetaTags titleTemplate="%s - {lang === 'en' ? 'Menus' : 'Ementas'}" />
 
 <div class="mx-auto flex max-w-screen-md flex-col gap-4 p-4">
     <header class="flex flex-row gap-2">

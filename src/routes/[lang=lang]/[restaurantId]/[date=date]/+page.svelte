@@ -7,6 +7,7 @@
     import { fade } from "svelte/transition";
     import type { RestaurantLanguage } from "$lib/restaurant.js";
     import { typedEntries } from "$lib/util.js";
+    import { MetaTags } from "svelte-meta-tags";
 
     export let data;
 
@@ -74,6 +75,13 @@
     const url = (date: string) =>
         `/${data.lang}/${data.restaurant?.id}/${date}/`;
 </script>
+
+<MetaTags
+    title={data.restaurant?.name ?? "Restaurant"}
+    description={lang === "en"
+        ? `Menu for ${data.restaurant?.name ?? "the restaurant"}`
+        : `Ementa para ${data.restaurant?.name ?? "o restaurante"}`}
+/>
 
 <svelte:body
     use:swipe={{ touchAction: "pan-y" }}

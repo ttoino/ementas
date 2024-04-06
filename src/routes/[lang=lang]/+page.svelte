@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { MetaTags } from "svelte-meta-tags";
+
     export let data;
 
     $: lang = data.lang;
@@ -7,7 +9,18 @@
     );
 </script>
 
-<ul class="grid md:grid-cols-2 gap-4">
+<MetaTags
+    title={lang === "en" ? "Restaurants" : "Restaurantes"}
+    description={lang === "en"
+        ? "List of restaurants"
+        : "Lista de restaurantes"}
+    languageAlternates={[
+        { hrefLang: "en", href: "/en/" },
+        { hrefLang: "pt", href: "/pt/" },
+    ]}
+/>
+
+<ul class="grid gap-4 md:grid-cols-2">
     {#each restaurants as restaurant (restaurant.id)}
         <li>
             <a href={`/${lang}/${restaurant.id}/`} class="btn btn-lg w-full">

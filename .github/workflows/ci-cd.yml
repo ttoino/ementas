@@ -57,6 +57,9 @@ jobs:
       - lint
       - format
       - check
+    env:
+      # Just needs to be defined, doesn't need to be a real URL 
+      DATABASE_URL:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -74,6 +77,9 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build
+    env:
+      # Just needs to be defined, doesn't need to be a real URL 
+      DATABASE_URL:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
