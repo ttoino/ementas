@@ -17,7 +17,6 @@ COPY prisma prisma
 COPY static static
 COPY src src
 
-RUN npm run prisma:gen
 RUN npm run build
 
 FROM node:current-alpine AS prod

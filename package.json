@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "scripts": {
         "dev": "vite dev",
+        "prebuild": "npm run prisma:gen",
         "build": "vite build",
         "preview": "vite preview",
         "prisma:gen": "prisma generate",
