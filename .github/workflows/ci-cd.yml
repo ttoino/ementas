@@ -59,7 +59,7 @@ jobs:
       - check
     env:
       # Just needs to be defined, doesn't need to be a real URL 
-      DATABASE_URL:
+      DATABASE_URL: mongodb://mongo:27017/ementas
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,7 +79,7 @@ jobs:
       - build
     env:
       # Just needs to be defined, doesn't need to be a real URL 
-      DATABASE_URL:
+      DATABASE_URL: mongodb://mongo:27017/ementas
     steps:
       - name: Checkout
         uses: actions/checkout@v4
