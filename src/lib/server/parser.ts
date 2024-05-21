@@ -1,8 +1,10 @@
-import { dateRange, toISO8601 } from "./dates";
-import type { MealType, MealWithRestaurant } from "./meal";
-import type { RestaurantLanguage, RestaurantWithFiles } from "./restaurant";
-import type { PDFDocumentProxy } from "pdfjs-dist";
-import type { TextItem } from "pdfjs-dist/types/src/display/api";
+import { dateRange, toISO8601 } from "../dates";
+import type { MealType, MealWithRestaurant } from "../meal";
+import type { RestaurantLanguage, RestaurantWithFiles } from "../restaurant";
+import type {
+    PDFDocumentProxy,
+    TextItem,
+} from "pdfjs-dist/types/src/display/api";
 import { Temporal } from "temporal-polyfill";
 
 /**

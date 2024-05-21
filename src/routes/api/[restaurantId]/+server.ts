@@ -1,4 +1,4 @@
-import prisma from "$lib/prisma";
+import prisma from "$lib/server/prisma";
 import { includeMealsBetween } from "../util";
 import type { RequestHandler } from "./$types";
 import { error, json } from "@sveltejs/kit";

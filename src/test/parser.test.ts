@@ -1,4 +1,4 @@
-import { parsePdf } from "$lib/parser";
+import { parsePdf } from "$lib/server/parser";
 import { getDocument } from "pdfjs-dist";
 import { describe, expect, it } from "vitest";
 

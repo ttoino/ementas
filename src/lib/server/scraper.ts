@@ -1,12 +1,8 @@
-import type { MealWithRestaurant } from "./meal";
+import type { MealWithRestaurant } from "../meal";
+import type { RestaurantLanguage, RestaurantWithFiles } from "../restaurant";
 import { parsePdf } from "./parser";
-import type { RestaurantLanguage, RestaurantWithFiles } from "./restaurant";
 import { parseHTML } from "linkedom";
-import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
-// @ts-expect-error: No types
-import * as PDFJSWorker from "pdfjs-dist/build/pdf.worker";
-
-GlobalWorkerOptions.workerSrc = PDFJSWorker;
+import { getDocument } from "pdfjs-dist";
 
 export const scrape = (): Promise<MealWithRestaurant[]> =>
     Promise.allSettled([

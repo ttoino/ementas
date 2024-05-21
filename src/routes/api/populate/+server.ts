@@ -1,6 +1,6 @@
-import prisma from "$lib/prisma";
+import prisma from "$lib/server/prisma";
 import type { Restaurant } from "$lib/restaurant";
-import { scrape } from "$lib/scraper";
+import { scrape } from "$lib/server/scraper";
 import type { RequestHandler } from "./$types";
 import { error, json } from "@sveltejs/kit";
 
