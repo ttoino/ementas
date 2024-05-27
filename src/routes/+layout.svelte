@@ -57,6 +57,16 @@
                 </span>
             </a>
         {/if}
+        <a
+            href="https://github.com/ttoino/ementas"
+            class="btn tooltip tooltip-bottom inline-flex"
+            data-tip="Github"
+            target="_blank"
+        >
+            <span class="i-tabler-brand-github select-none text-2xl">
+                Github
+            </span>
+        </a>
     </header>
 
     <slot />
