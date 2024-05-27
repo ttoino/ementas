@@ -130,6 +130,7 @@ export const parsePdf = async (
     const restaurantDinner = {
         ...restaurant,
         name: `${restaurant.name} - ${dinnerLanguageMap[restaurant.lang]}`,
+        slug: `${restaurant.slug}-${dinnerLanguageMap[restaurant.lang].toLowerCase()}`,
     };
 
     for (let i = 1; i <= pdf.numPages; i++) {

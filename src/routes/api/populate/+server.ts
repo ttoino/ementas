@@ -1,5 +1,5 @@
-import prisma from "$lib/server/prisma";
 import type { Restaurant } from "$lib/restaurant";
+import prisma from "$lib/server/prisma";
 import { scrape } from "$lib/server/scraper";
 import type { RequestHandler } from "./$types";
 import { error, json } from "@sveltejs/kit";
@@ -23,10 +23,12 @@ export const POST: RequestHandler = async ({ getClientAddress }) => {
                         where: { name: meal.restaurant.name },
                         update: {
                             name: meal.restaurant.name,
+                            slug: meal.restaurant.slug,
                             lang: meal.restaurant.lang,
                         },
                         create: {
                             name: meal.restaurant.name,
+                            slug: meal.restaurant.slug,
                             lang: meal.restaurant.lang,
                         },
                     });

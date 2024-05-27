@@ -1,9 +1,10 @@
 import type { MealWithRestaurant } from "../meal";
 import type { RestaurantLanguage, RestaurantWithFiles } from "../restaurant";
 import { parsePdf } from "./parser";
+import { url as workerSrc } from "./pdfjsworker";
 import { parseHTML } from "linkedom";
 import { GlobalWorkerOptions, getDocument } from "pdfjs-dist";
-import { url as workerSrc } from "./pdfjsworker";
+import slugify from "slugify";
 
 GlobalWorkerOptions.workerSrc = workerSrc;
 
@@ -39,9 +40,14 @@ const scrapeRestaurants = async (
                 const url = new URL(a.href.replace(/^%20/, ""), baseUrl).href;
                 console.log("Parsing", url);
 
+                const name =
+                    a.textContent?.replace("Menu", "")?.trim() ?? "Unknown";
+
+                const slug = slugify(name, { lower: true, strict: true });
+
                 const restaurant: RestaurantWithFiles = {
-                    name:
-                        a.textContent?.replace("Menu", "")?.trim() ?? "Unknown",
+                    name,
+                    slug,
                     lang,
                     files: [],
                 };

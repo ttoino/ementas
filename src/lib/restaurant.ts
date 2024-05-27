@@ -1,5 +1,5 @@
-import type { Prisma, Language } from "@prisma/client";
 import type { Meal } from "./meal";
+import type { Prisma, Language } from "@prisma/client";
 
 export type RestaurantLanguage = Language;
 

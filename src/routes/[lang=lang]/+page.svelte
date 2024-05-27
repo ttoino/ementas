@@ -23,7 +23,10 @@
 <ul class="grid gap-4 md:grid-cols-2">
     {#each restaurants as restaurant (restaurant.id)}
         <li>
-            <a href={`/${lang}/${restaurant.id}/`} class="btn btn-lg w-full">
+            <a
+                href={`/${lang}/${restaurant.slug ?? restaurant.id}/`}
+                class="btn btn-lg w-full"
+            >
                 {restaurant.name}
             </a>
         </li>
