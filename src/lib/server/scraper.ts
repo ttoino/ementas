@@ -2,7 +2,10 @@ import type { MealWithRestaurant } from "../meal";
 import type { RestaurantLanguage, RestaurantWithFiles } from "../restaurant";
 import { parsePdf } from "./parser";
 import { parseHTML } from "linkedom";
-import { getDocument } from "pdfjs-dist";
+import { GlobalWorkerOptions, getDocument } from "pdfjs-dist";
+import { url as workerSrc } from "./pdfjsworker";
+
+GlobalWorkerOptions.workerSrc = workerSrc;
 
 export const scrape = (): Promise<MealWithRestaurant[]> =>
     Promise.allSettled([
