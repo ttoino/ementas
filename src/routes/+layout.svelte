@@ -39,9 +39,11 @@
                     {#each restaurants as restaurant, i (i)}
                         <li>
                             <a
-                                href="/{restaurant.lang}/{restaurant.id}/{date ??
-                                    ''}">{restaurant.name}</a
+                                href="/{restaurant.lang}/{restaurant.slug ??
+                                    restaurant.id}/{date ?? ''}"
                             >
+                                {restaurant.name}
+                            </a>
                         </li>
                     {/each}
                 </ul>
