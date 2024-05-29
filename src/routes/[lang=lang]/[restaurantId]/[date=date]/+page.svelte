@@ -72,8 +72,8 @@
             ]);
     }
 
-    const url = (date: string) =>
-        `/${data.lang}/${data.restaurant?.id}/${date}/`;
+    const url = (d: string = date) =>
+        `/${data.lang}/${data.restaurant?.slug ?? data.restaurant?.id}/${d}/`;
 </script>
 
 <MetaTags
@@ -86,11 +86,12 @@
 <svelte:body
     use:swipe={{ touchAction: "pan-y" }}
     on:swipe={({ detail: { direction } }) => {
+        if (matchMedia("(pointer: fine)").matches) return;
+
         if (direction === "left") goto(url(dates[8][0]));
         else if (direction === "right") goto(url(dates[6][0]));
     }}
     on:keydown={({ key }) => {
-        console.log(key);
         if (key === "ArrowLeft") goto(url(dates[6][0]));
         else if (key === "ArrowRight") goto(url(dates[8][0]));
     }}
