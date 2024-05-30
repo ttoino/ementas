@@ -22,14 +22,12 @@ export const POST: RequestHandler = async ({ getClientAddress }) => {
                     const restaurant = await prisma.restaurant.upsert({
                         where: { name: meal.restaurant.name },
                         update: {
-                            name: meal.restaurant.name,
-                            slug: meal.restaurant.slug,
-                            lang: meal.restaurant.lang,
+                            ...meal.restaurant,
+                            files: undefined,
                         },
                         create: {
-                            name: meal.restaurant.name,
-                            slug: meal.restaurant.slug,
-                            lang: meal.restaurant.lang,
+                            ...meal.restaurant,
+                            files: undefined,
                         },
                     });
                     restaurantMap.set(restaurant.name, {

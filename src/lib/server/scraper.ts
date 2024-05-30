@@ -34,20 +34,38 @@ const scrapeRestaurants = async (
     const { document } = parseHTML(html);
     console.log("Scraped", baseUrl, document.title);
 
+    let campus: string | null = null;
+
     const meals: MealWithRestaurant[] = await Promise.allSettled(
-        [...document.querySelectorAll<HTMLAnchorElement>("a[download]")].map(
-            async (a) => {
-                const url = new URL(a.href.replace(/^%20/, ""), baseUrl).href;
+        [
+            ...document.querySelectorAll<
+                HTMLAnchorElement | HTMLHeadingElement
+            >(".row :is(a[download], h2)"),
+        ]
+            .map((e) => {
+                if (e.nodeName == "H2") campus = e.textContent;
+
+                return { e, campus };
+            })
+            .filter(
+                (({ e }) => e.nodeName == "A") as (a: {
+                    e: HTMLElement;
+                    campus: string | null;
+                }) => a is { e: HTMLAnchorElement; campus: string | null },
+            )
+            .map(async ({ e, campus }) => {
+                const url = new URL(e.href.replace(/^%20/, ""), baseUrl).href;
                 console.log("Parsing", url);
 
                 const name =
-                    a.textContent?.replace("Menu", "")?.trim() ?? "Unknown";
+                    e.textContent?.replace("Menu", "")?.trim() ?? "Unknown";
 
                 const slug = slugify(name, { lower: true, strict: true });
 
                 const restaurant: RestaurantWithFiles = {
                     name,
                     slug,
+                    campus,
                     lang,
                     files: [],
                 };
@@ -57,8 +75,7 @@ const scrapeRestaurants = async (
                 console.log("Parsed", url);
 
                 return r;
-            },
-        ),
+            }),
     ).then((results) =>
         results.flatMap((result) => {
             if (result.status === "rejected") {

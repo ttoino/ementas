@@ -5,8 +5,10 @@ export const load: LayoutLoad = async ({ params, parent }) => {
     const { lang, restaurantId } = params;
     const { restaurants } = await parent();
 
-    const restaurant = restaurants.find((r) => r.id === restaurantId);
+    const restaurant = restaurants.find(
+        (r) => r.id === restaurantId || r.slug === restaurantId,
+    );
 
     if (restaurant && restaurant?.lang !== lang)
-        throw redirect(307, `/${restaurant.lang}/${restaurant.id}/`);
+        throw redirect(308, `/${restaurant.lang}/${restaurantId}/`);
 };

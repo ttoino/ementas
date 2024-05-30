@@ -14,9 +14,9 @@ export const load: PageServerLoad = async ({ request }) => {
             lang = lang.split("-")[0];
             console.log(lang);
 
-            if (match(lang)) throw redirect(307, `/${lang}/`);
+            if (match(lang)) throw redirect(308, `/${lang}/`);
         });
     }
 
-    throw redirect(307, "/en/");
+    throw redirect(308, "/en/");
 };

@@ -19,12 +19,13 @@ enum Language {
 }
 
 model Restaurant {
-    id    String     @id @default(auto()) @map("_id") @db.ObjectId
-    slug  String?    @unique
-    name  String     @unique
-    lang  Language
-    meals Meal[]
-    files MenuFile[]
+    id     String     @id @default(auto()) @map("_id") @db.ObjectId
+    slug   String?    @unique
+    name   String     @unique
+    campus String?
+    lang   Language
+    meals  Meal[]
+    files  MenuFile[]
 }
 
 model MenuFile {
