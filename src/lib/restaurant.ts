@@ -1,7 +1,5 @@
 import type { Meal } from "./meal";
-import type { Prisma, Language } from "@prisma/client";
-
-export type RestaurantLanguage = Language;
+import type { Prisma } from "@prisma/client";
 
 export type MenuFile = Prisma.MenuFileUncheckedCreateInput;
 

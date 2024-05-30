@@ -3,6 +3,7 @@
     import type { Restaurant } from "$lib/restaurant";
     import { MetaTags } from "svelte-meta-tags";
     import "../app.pcss";
+    import { _, __, messages } from "$lib/i18n";
 
     export let data;
 
@@ -19,19 +20,19 @@
             : undefined;
 </script>
 
-<MetaTags titleTemplate="%s - {lang === 'en' ? 'Menus' : 'Ementas'}" />
+<MetaTags titleTemplate="%s - {$_(messages.menus)}" />
 
 <div class="mx-auto flex max-w-screen-md flex-col gap-4 p-4">
     <header class="flex flex-row gap-2">
         <h1 class="flex-1 text-4xl">
             <a href="/{lang ?? ''}">
-                {lang === "en" ? "Menus" : "Ementas"}
+                {$_(messages.menus)}
             </a>
         </h1>
         {#if selectedRestaurant}
             <div class="dropdown dropdown-end">
                 <button class="btn">
-                    {selectedRestaurant?.name ?? "Select restaurant"}
+                    {selectedRestaurant?.name ?? $_(messages.selectRestaurant)}
                 </button>
                 <ul
                     class="menu dropdown-content z-20 mt-2 max-h-52 w-64 flex-nowrap overflow-y-auto rounded-box bg-base-300 p-2 shadow"
@@ -49,13 +50,14 @@
                 </ul>
             </div>
         {:else if lang}
+            {@const otherLang = lang === "en" ? "pt" : "en"}
             <a
-                href="/{lang === 'en' ? 'pt' : 'en'}"
+                href="/{otherLang}"
                 class="btn tooltip tooltip-bottom inline-flex"
-                data-tip={lang === "en" ? "Português" : "English"}
+                data-tip={__(otherLang, messages.language)}
             >
                 <span class="i-tabler-world select-none text-2xl">
-                    {lang === "en" ? "Português" : "English"}
+                    {__(otherLang, messages.language)}
                 </span>
             </a>
         {/if}
@@ -66,7 +68,7 @@
             target="_blank"
         >
             <span class="i-tabler-brand-github select-none text-2xl">
-                Github
+                {$_(messages.github)}
             </span>
         </a>
     </header>

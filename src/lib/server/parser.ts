@@ -1,6 +1,7 @@
+import { __, messages } from "$lib/i18n";
 import { dateRange, toISO8601 } from "../dates";
 import type { MealType, MealWithRestaurant } from "../meal";
-import type { RestaurantLanguage, RestaurantWithFiles } from "../restaurant";
+import type { RestaurantWithFiles } from "../restaurant";
 import type {
     PDFDocumentProxy,
     TextItem,
@@ -108,11 +109,6 @@ const datePattern =
  */
 const dinnerPattern = /jantar|dinner/iu;
 
-const dinnerLanguageMap: Record<RestaurantLanguage, string> = {
-    pt: "Jantar",
-    en: "Dinner",
-};
-
 /**
  * Parses a PDF to extract the meals.
  *
@@ -129,8 +125,8 @@ export const parsePdf = async (
 
     const restaurantDinner = {
         ...restaurant,
-        name: `${restaurant.name} - ${dinnerLanguageMap[restaurant.lang]}`,
-        slug: `${restaurant.slug}-${dinnerLanguageMap[restaurant.lang].toLowerCase()}`,
+        name: `${restaurant.name} - ${__(restaurant.lang, messages.dinner)}`,
+        slug: `${restaurant.slug}-${__(restaurant.lang, messages.dinner).toLowerCase()}`,
     };
 
     for (let i = 1; i <= pdf.numPages; i++) {

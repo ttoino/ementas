@@ -1,3 +1,6 @@
+export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
+    U[keyof U];
+
 type Entries<T> = {
     [K in keyof Required<T>]: [K, T[K]];
 }[keyof T][];

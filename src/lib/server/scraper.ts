@@ -1,5 +1,6 @@
+import { __, messages, type Language } from "$lib/i18n";
 import type { MealWithRestaurant } from "../meal";
-import type { RestaurantLanguage, RestaurantWithFiles } from "../restaurant";
+import type { RestaurantWithFiles } from "../restaurant";
 import { parsePdf } from "./parser";
 import { url as workerSrc } from "./pdfjsworker";
 import { parseHTML } from "linkedom";
@@ -26,7 +27,7 @@ export const scrape = (): Promise<MealWithRestaurant[]> =>
 
 const scrapeRestaurants = async (
     baseUrl: string,
-    lang: RestaurantLanguage,
+    lang: Language,
 ): Promise<MealWithRestaurant[]> => {
     console.log("Scraping", baseUrl);
     const res = await fetch(baseUrl);
@@ -58,7 +59,8 @@ const scrapeRestaurants = async (
                 console.log("Parsing", url);
 
                 const name =
-                    e.textContent?.replace("Menu", "")?.trim() ?? "Unknown";
+                    e.textContent?.replace("Menu", "")?.trim() ??
+                    __(lang, messages.unknown);
 
                 const slug = slugify(name, { lower: true, strict: true });
 

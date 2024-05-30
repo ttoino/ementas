@@ -5,9 +5,9 @@
     import { swipe } from "svelte-gestures";
     import { goto } from "$app/navigation";
     import { fade } from "svelte/transition";
-    import type { RestaurantLanguage } from "$lib/restaurant.js";
     import { typedEntries } from "$lib/util.js";
     import { MetaTags } from "svelte-meta-tags";
+    import { _, messages } from "$lib/i18n";
 
     export let data;
 
@@ -23,27 +23,6 @@
         vegetarian: "text-success i-tabler-leaf",
         salad: "text-accent i-tabler-salad",
         other: "i-tabler-tools-kitchen-2",
-    };
-
-    const typeNames: Record<RestaurantLanguage, Record<MealType, string>> = {
-        en: {
-            soup: "Soup",
-            meat: "Meat",
-            fish: "Fish",
-            diet: "Diet",
-            vegetarian: "Vegetarian",
-            salad: "Salad",
-            other: "Other",
-        },
-        pt: {
-            soup: "Sopa",
-            meat: "Carne",
-            fish: "Peixe",
-            diet: "Dieta",
-            vegetarian: "Vegetariano",
-            salad: "Salada",
-            other: "Outro",
-        },
     };
 
     let dates: [string, string][] = [];
@@ -77,7 +56,7 @@
 </script>
 
 <MetaTags
-    title={data.restaurant?.name ?? "Restaurant"}
+    title={data.restaurant?.name ?? $_(messages.restaurant)}
     description={lang === "en"
         ? `Menu for ${data.restaurant?.name ?? "the restaurant"}`
         : `Ementa para ${data.restaurant?.name ?? "o restaurante"}`}
@@ -105,8 +84,10 @@
             animate:flip
             href={url(date)}
             class="tab whitespace-nowrap transition-colors"
-            class:tab-active={i == 7}>{dateStr}</a
+            class:tab-active={i == 7}
         >
+            {dateStr}
+        </a>
     {/each}
 </nav>
 
@@ -121,21 +102,24 @@
                 >
                     <span
                         class="tooltip tooltip-bottom"
-                        data-tip={typeNames[lang][type]}
+                        data-tip={$_(messages.mealTypes[type])}
                     >
                         <span
                             class="select-none text-5xl {type in typeClasses
                                 ? typeClasses[type]
                                 : typeClasses['other']}"
-                            >{typeNames[lang][type]}</span
                         >
+                            {$_(messages.mealTypes[type])}
+                        </span>
                     </span>
                     <div class="grid items-center">
                         {#key dish}
                             <span
                                 class="col-start-1 row-start-1 text-xl"
-                                transition:fade>{dish}</span
+                                transition:fade
                             >
+                                {dish}
+                            </span>
                         {/key}
                     </div>
                 </li>
@@ -148,7 +132,7 @@
         >
             <span class="i-tabler-tools-kitchen-2-off text-9xl"></span>
             <span>
-                {lang === "en" ? "Menu not found" : "Ementa não encontrada"}
+                {$_(messages.notFound)}
             </span>
         </p>
     {/if}

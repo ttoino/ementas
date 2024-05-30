@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _, messages } from "$lib/i18n";
     import type { Restaurant } from "$lib/restaurant.js";
     import { typedEntries } from "$lib/util.js";
     import { MetaTags } from "svelte-meta-tags";
@@ -8,15 +9,13 @@
     $: lang = data.lang;
     $: restaurantsByCampus = Object.groupBy(
         data.restaurants.filter((restaurant) => restaurant.lang === lang),
-        (r) => r.campus ?? "Other",
+        (r) => r.campus ?? $_(messages.other),
     ) as Record<string, Restaurant[]>;
 </script>
 
 <MetaTags
-    title={lang === "en" ? "Restaurants" : "Restaurantes"}
-    description={lang === "en"
-        ? "List of restaurants"
-        : "Lista de restaurantes"}
+    title={$_(messages.restaurants)}
+    description={$_(messages.restaurantList)}
     languageAlternates={[
         { hrefLang: "en", href: "/en/" },
         { hrefLang: "pt", href: "/pt/" },

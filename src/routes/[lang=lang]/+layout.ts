@@ -1,4 +1,4 @@
-import type { RestaurantLanguage } from "$lib/restaurant";
+import type { Language } from "$lib/i18n";
 import type { LayoutLoad } from "./$types";
 
 export const load: LayoutLoad = async ({ params, setHeaders }) => {
@@ -7,6 +7,6 @@ export const load: LayoutLoad = async ({ params, setHeaders }) => {
     });
 
     return {
-        lang: params.lang as RestaurantLanguage,
+        lang: params.lang as Language,
     };
 };
