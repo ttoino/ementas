@@ -3,16 +3,17 @@
     import type { Restaurant } from "$lib/restaurant";
     import { MetaTags } from "svelte-meta-tags";
     import "../app.pcss";
-    import { _, __, messages } from "$lib/i18n";
+    import { _, __, messages, type Language } from "$lib/i18n";
+    import { sortedEntriesByKey, strCompare } from "$lib/util";
 
     export let data;
 
-    $: lang = $page.data.lang as string | undefined;
+    $: lang = $page.data.lang as Language | undefined;
     $: date = $page.data.date as string | undefined;
 
-    $: restaurants = lang
-        ? data.restaurants.filter((restaurant) => restaurant.lang === lang)
-        : data.restaurants;
+    $: restaurantsByCampus = lang
+        ? data.restaurantsByLanguageAndCampus[lang]
+        : data.restaurantsByCampus;
 
     $: selectedRestaurant =
         "restaurant" in $page.data
@@ -37,15 +38,20 @@
                 <ul
                     class="menu dropdown-content z-20 mt-2 max-h-52 w-64 flex-nowrap overflow-y-auto rounded-box bg-base-300 p-2 shadow"
                 >
-                    {#each restaurants as restaurant, i (i)}
-                        <li>
-                            <a
-                                href="/{restaurant.lang}/{restaurant.slug ??
-                                    restaurant.id}/{date ?? ''}"
-                            >
-                                {restaurant.name}
-                            </a>
-                        </li>
+                    {#each sortedEntriesByKey(restaurantsByCampus, strCompare) as [campus, restaurants] (campus)}
+                        <li class="menu-title">{campus}</li>
+                        {#each restaurants as restaurant (restaurant.id)}
+                            <li>
+                                <a
+                                    class:active={restaurant.id ===
+                                        selectedRestaurant.id}
+                                    href="/{restaurant.lang}/{restaurant.slug ??
+                                        restaurant.id}/{date ?? ''}"
+                                >
+                                    {restaurant.name}
+                                </a>
+                            </li>
+                        {/each}
                     {/each}
                 </ul>
             </div>
