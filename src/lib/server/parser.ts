@@ -2,11 +2,20 @@ import { __, messages } from "$lib/i18n";
 import { dateRange, toISO8601 } from "../dates";
 import type { MealType, MealWithRestaurant } from "../meal";
 import type { RestaurantWithFiles } from "../restaurant";
+import { createCanvas } from "canvas";
+import jimp from "jimp";
+import { type PDFPageProxy } from "pdfjs-dist";
 import type {
     PDFDocumentProxy,
     TextItem,
 } from "pdfjs-dist/types/src/display/api";
 import { Temporal } from "temporal-polyfill";
+import {
+    type Worker,
+    createWorker,
+    type RecognizeResult,
+    type Word,
+} from "tesseract.js";
 
 /**
  * Used to convert meal types from the PDF to their internal representation.
@@ -14,21 +23,24 @@ import { Temporal } from "temporal-polyfill";
 const mealTypeMap: Record<string, MealType> = {
     Sopa: "soup",
     Soup: "soup",
+    "Prato de Carne": "meat",
+    "Meat dish": "meat",
     Carne: "meat",
     Meat: "meat",
-    "Prato de Carne": "meat",
+    "Prato de Peixe": "fish",
+    "Prato de Pescado": "fish",
+    "Fish dish": "fish",
     Peixe: "fish",
     Pescado: "fish",
     Fish: "fish",
-    "Prato de Peixe": "fish",
-    "Prato de Pescado": "fish",
     Dieta: "diet",
     Diet: "diet",
+    "Prato Vegetariano": "vegetarian",
+    "Vegetarian dish": "vegetarian",
     Vegetariano: "vegetarian",
     Vegetariana: "vegetarian",
     Vegetarian: "vegetarian",
     Vegan: "vegetarian",
-    "Prato Vegetariano": "vegetarian",
     Hortícola: "salad",
     Vegetable: "salad",
 };
@@ -96,7 +108,7 @@ const ignorePattern = new RegExp(
     "u",
 );
 
-const closedPattern = /ENCERRADO|CLOSED|Carnaval/u;
+const closedPattern = /ENCERRADO|CLOSED|Carnaval|Feriado|Holiday/u;
 
 /**
  * Used to match dates in the PDF.
@@ -129,17 +141,119 @@ export const parsePdf = async (
         slug: `${restaurant.slug}-${__(restaurant.lang, messages.dinner).toLowerCase()}`,
     };
 
+    let worker: Worker | undefined = undefined;
+
     for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
 
         const content = await page.getTextContent();
 
-        const lines = getLines(content.items as TextItem[]);
+        let lines = getLines(content.items as TextItem[]);
+
+        if (lines.length == 0) {
+            const image = await getImage(page);
+
+            if (!worker)
+                worker = await createWorker(
+                    __(restaurant.lang, messages.threeLetter) + "_ementas",
+                );
+
+            const result = await worker.recognize(image);
+            lines = await parseTextFromImage(result);
+        }
 
         items.push(...parseContent(lines, restaurant, restaurantDinner));
     }
 
+    worker?.terminate();
+
     return items;
+};
+
+const getImage = async (page: PDFPageProxy) => {
+    const viewport = page.getViewport({ scale: 2 });
+    const canvas = createCanvas(viewport.width, viewport.height);
+    const canvasContext = canvas.getContext(
+        "2d",
+    ) as unknown as CanvasRenderingContext2D;
+    await page.render({
+        canvasContext,
+        viewport,
+    }).promise;
+    canvasContext.filter = "grayscale(100%) contrast(50%)";
+    return await (await jimp.read(canvas.toBuffer()))
+        .scale(4)
+        .grayscale()
+        .contrast(0.5)
+        .getBufferAsync("image/png");
+};
+
+const parseTextFromImage = async (result: RecognizeResult) => {
+    let lines = result.data.blocks?.flatMap((block) =>
+        block.paragraphs.flatMap((paragraph) => paragraph.lines),
+    );
+
+    const words = lines?.flatMap((line) => line.words);
+
+    if (!words || !lines) return [];
+
+    const VEs = words.filter(
+        (word) => word.text === "VE" || word.text === "(kJ)",
+    );
+    // Remove last VE, it's in the footer legend
+    VEs.pop();
+    const startWords = words.filter(
+        (word) =>
+            word.text === "Segunda" ||
+            word.text === "Monday" ||
+            word.text === "Almoço",
+    );
+    const startY = startWords
+        ? Math.min(...startWords.map((w) => w.bbox.y0)) - 20
+        : 0;
+    const endX = VEs ? Math.min(...VEs.map((w) => w.bbox.x0)) : Infinity;
+
+    lines = lines
+        .map((line) =>
+            line.bbox.y0 >= startY
+                ? {
+                      ...line,
+                      words: line.words.filter((word) => word.bbox.x1 <= endX),
+                  }
+                : line,
+        )
+        .filter((line) => line.words.length > 0);
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const mealType: Word[] = [];
+
+        for (const word of line.words) {
+            if ([...mealType, word].map((w) => w.text).join(" ") in mealTypeMap)
+                mealType.push(word);
+            else break;
+        }
+
+        if (mealType.length == 0) continue;
+
+        lines[i] = {
+            ...line,
+            words: line.words.slice(mealType.length),
+        };
+
+        const startY = Math.min(...mealType.map((w) => w.bbox.y0));
+        const endY = Math.max(...mealType.map((w) => w.bbox.y1));
+
+        const mealTypeLine = lines.find(
+            (l) =>
+                (l.bbox.y0 >= startY && l.bbox.y0 <= endY) ||
+                (l.bbox.y1 >= startY && l.bbox.y1 <= endY) ||
+                (l.bbox.y0 <= startY && l.bbox.y1 >= endY),
+        );
+        mealTypeLine?.words.unshift(...mealType);
+    }
+
+    return lines.map((line) => line.words.map((word) => word.text).join(" "));
 };
 
 /**

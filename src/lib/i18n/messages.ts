@@ -68,6 +68,10 @@ export const messages = {
         en: "Select restaurant",
         pt: "Seleciona um restaurante",
     },
+    threeLetter: {
+        en: "eng",
+        pt: "por",
+    },
     unknown: {
         en: "Unknown",
         pt: "Desconhecido",

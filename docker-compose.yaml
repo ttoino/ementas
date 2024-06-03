@@ -31,19 +31,26 @@ services:
         env_file: .env
 
     dev:
-        image: node:current-alpine
-        working_dir: /app
+        build:
+            context: .
+            target: dev
         volumes:
             - .:/app
         ports:
             - "5173:5173"
-        command: npm run dev -- --host
         depends_on:
             - mongo
 
     test:
-        image: node:current-alpine
-        working_dir: /app
+        build:
+            context: .
+            target: dev
         volumes:
             - .:/app
         command: npm run test
+
+    tesstrain:
+        build:
+            context: .
+            target: tesstrain
+        command: tail -f /dev/null
