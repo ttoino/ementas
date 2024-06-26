@@ -45,7 +45,6 @@ COPY package-lock.json .
 
 RUN npm ci
 
-COPY .env .
 COPY postcss.config.js .
 COPY svelte.config.js .
 COPY tailwind.config.js .
